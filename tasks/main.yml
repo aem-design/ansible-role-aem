@@ -1,0 +1,88 @@
+---
+
+- name: "set facts"
+  set_fact:
+    role_comment: "( {{ docker_container_name | default('aem') }} )"
+  tags:
+    - always
+
+- name: add debug start parameters to container {{ role_comment }}
+  set_fact:
+    aem_jvm_opts: "{{ aem_jvm_opts }} {{ aem_debug_opts }}"
+  when:
+    - aem_debug
+
+- name: ensure container is started {{ role_comment }}
+  include_role:
+    name: aem_design.docker_container
+  vars:
+    env:
+      TZ: "{{ docker.timezone }}"
+      AEM_JVM_OPTS: "{{ aem_jvm_opts }}"
+      AEM_START_OPTS: "{{ aem_start_opts }}"
+      AEM_RUNMODE: "{{ aem_runmode }}"
+  tags:
+    - docker-container
+
+- name: ensure container is registered {{ role_comment }}
+  include_role:
+    name: aem_design.aem_license
+  tags:
+    - docker-container
+
+- name: update host network iptables {{ role_comment }}
+  include_role:
+    name: aem_design.config_iptables
+  tags:
+    - host-config
+
+- name: ensure instance is ready {{ role_comment }}
+  include_role:
+    name: aem_design.aem_verify
+  tags:
+    - docker-container
+
+- name: install aem packages with params {{ role_comment }}
+  debug:
+    msg:
+      - "name: {{ docker_container_name }}"
+      - "image: {{ docker_image }}:{{ docker_image_tag }}"
+      - "state: {{ container_state | default('started') }}"
+      - "published_ports: {{ docker_published_ports }}"
+      - "restart_policy: {{ docker_restart_policy }}"
+      - "volumes: {{ docker_volumes }}"
+      - "volume_driver: {{ docker_volume_driver }}"
+      - "pull: {{ docker_registry_images_pull }}"
+      - "env.TZ: {{ docker_timezone }}"
+      - "env.AEM_JVM_OPTS: {{ aem_jvm_opts }}"
+      - "env.AEM_START_OPTS: {{ aem_start_opts }}"
+      - "env.AEM_RUNMODE: {{ aem_runmode }}"
+
+- name: install aem packages {{ role_comment }}
+  include_role:
+    name: aem_design.aem_package
+  vars:
+    adobeaemcloud_username: "{{ adobeaemcloud_username }}"
+    adobeaemcloud_password: "{{ adobeaemcloud_password }}"
+    aem_host: "{{ aem_host }}"
+    aem_port: "{{ aem_port }}"
+    aem_username: "{{ aem_username }}"
+    aem_password: "{{ aem_password }}"
+    group_name: "{{ item.group_name }}"
+    package_name: "{{ item.package_name }}"
+    package_version: "{{ item.version }}"
+    package_source: "{{ item.package_source }}"
+    package_url: "{{ item.package_url }}"
+    file_name: "{{ item.file_name }}"
+    file_override: "{{ item.file_override | default(false) }}"
+    file_override_package_name: "{{ item.file_override_package_name | default('') }}"
+    simple_name: "{{ item.simple_name }}"
+    requires_restart: "{{ item.requires_restart }}"
+    requires_admin: "{{ item.requires_admin }}"
+  with_items: "{{ package_files }}"
+  when:
+    - not(package_files_skip)
+    - package_files is defined
+    - item is defined
+  tags:
+    - aem-packages
