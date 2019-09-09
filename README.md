@@ -65,7 +65,6 @@ This role depends on roles:
 - `aem_design.aem_license`
 - `aem_design.aem_package`
 - `aem_design.aem_verify`
-- `aem_design.config_iptables`
 
 ## Example Playbook
 
