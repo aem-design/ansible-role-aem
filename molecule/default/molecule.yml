@@ -7,22 +7,46 @@ lint:
   name: yamllint
   options:
     config-file: molecule/default/yaml-lint.yml
-platforms:
-  - name: instance
-    image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
-    command: ${MOLECULE_DOCKER_COMMAND:-""}
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    privileged: true
-    pre_build_image: true
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
   playbooks:
+    prepare: prepare.yml
     converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
+  inventory:
+    group_vars:
+      all:
+        service_aem_license_key: "${AEM_KEY}"
+        service_aem_license_name: "${AEM_NAME}"
+        service_adobe_cloud_username: "${ADOBECLOUD_USERNAME}"
+        service_adobe_cloud_password: "${ADOBECLOUD_PASSWORD}"
+        role_name: "${ROLE_NAME_FULL}"
+platforms:
+  - name: instance
+    image: "aemdesign/ansible-playbook:${MOLECULE_DISTRO:-centos7}"
+    command: ${MOLECULE_DOCKER_COMMAND:-"/usr/lib/systemd/systemd"}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/tmp/docker.sock
+    privileged: true
+    pre_build_image: true
 scenario:
   name: default
+  test_sequence:
+    - lint
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    #    - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
 verifier:
   name: testinfra
   lint:
