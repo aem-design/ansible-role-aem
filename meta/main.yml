@@ -28,7 +28,6 @@ galaxy_info:
     - aemdesign
 
 dependencies:
-  - aem_design.docker_container
   - aem_design.aem_license
-  - aem_design.aem_package
   - aem_design.aem_verify
+  - aem_design.aem_package
