@@ -12,12 +12,27 @@
   when:
     - aem_debug
 
+- name: start docker container with params {{ role_comment }}
+  debug:
+    msg:
+      - "name: {{ docker_container_name }}"
+      - "image: {{ docker_image }}:{{ docker_image_tag }}"
+      - "published_ports: {{ docker_published_ports }}"
+      - "volumes: {{ docker_volumes }}"
+      - "env.TZ: {{ docker_timezone }}"
+      - "env.AEM_JVM_OPTS: {{ aem_jvm_opts }}"
+      - "env.AEM_START_OPTS: {{ aem_start_opts }}"
+      - "env.AEM_RUNMODE: {{ aem_runmode }}"
+
 - name: ensure container is started {{ role_comment }}
-  include_role:
-    name: aem_design.docker_container
-  vars:
+  docker_container:
+    name: "{{ docker_container_name }}"
+    image: "{{ docker_image }}{% if docker_image %}:{% endif %}{{ docker_image_tag }}"
+    published_ports: "{{ docker_published_ports }}"
+    volumes: "{{ docker_volumes }}"
+    docker_host: "{{ docker_host }}"
     env:
-      TZ: "{{ docker.timezone }}"
+      TZ: "{{ docker_timezone }}"
       AEM_JVM_OPTS: "{{ aem_jvm_opts }}"
       AEM_START_OPTS: "{{ aem_start_opts }}"
       AEM_RUNMODE: "{{ aem_runmode }}"
@@ -27,55 +42,54 @@
 - name: ensure container is registered {{ role_comment }}
   include_role:
     name: aem_design.aem_license
+  vars:
+    aem_license_key: "{{ aem_license_key }}"
+    aem_license_name: "{{ aem_license_name }}"
+    aem_port: "{{ aem_port }}"
+    aem_host: "{{ aem_host }}"
+  when:
+    - aem_license_key | length > 0
+    - aem_license_name | length > 0
   tags:
     - docker-container
 
 - name: ensure instance is ready {{ role_comment }}
   include_role:
     name: aem_design.aem_verify
+  vars:
+    aem_port: "{{ aem_port }}"
+    aem_host: "{{ aem_host }}"
+  when:
+    - aem_port | length > 0
+    - aem_host | length > 0
   tags:
     - docker-container
 
-- name: install aem packages with params {{ role_comment }}
-  debug:
-    msg:
-      - "name: {{ docker_container_name }}"
-      - "image: {{ docker_image }}:{{ docker_image_tag }}"
-      - "state: {{ container_state | default('started') }}"
-      - "published_ports: {{ docker_published_ports }}"
-      - "restart_policy: {{ docker_restart_policy }}"
-      - "volumes: {{ docker_volumes }}"
-      - "volume_driver: {{ docker_volume_driver }}"
-      - "pull: {{ docker_registry_images_pull }}"
-      - "env.TZ: {{ docker_timezone }}"
-      - "env.AEM_JVM_OPTS: {{ aem_jvm_opts }}"
-      - "env.AEM_START_OPTS: {{ aem_start_opts }}"
-      - "env.AEM_RUNMODE: {{ aem_runmode }}"
 
 - name: install aem packages {{ role_comment }}
   include_role:
     name: aem_design.aem_package
   vars:
-    adobeaemcloud_username: "{{ adobeaemcloud_username }}"
-    adobeaemcloud_password: "{{ adobeaemcloud_password }}"
-    aem_host: "{{ aem_host }}"
     aem_port: "{{ aem_port }}"
-    aem_username: "{{ aem_username }}"
-    aem_password: "{{ aem_password }}"
+    aem_host: "{{ aem_host }}"
+    maven_repository_url: "{{ item.maven_repository_url | default('') }}"
+    debug_hide: "{{ item.debug_hide }}"
+    simple_name: "{{ item.simple_name }}"
     group_name: "{{ item.group_name }}"
+    package_version: "{{ item.package_version }}"
     package_name: "{{ item.package_name }}"
-    package_version: "{{ item.version }}"
-    package_source: "{{ item.package_source }}"
     package_url: "{{ item.package_url }}"
     file_name: "{{ item.file_name }}"
-    file_override: "{{ item.file_override | default(false) }}"
-    file_override_package_name: "{{ item.file_override_package_name | default('') }}"
-    simple_name: "{{ item.simple_name }}"
-    requires_restart: "{{ item.requires_restart }}"
-    requires_admin: "{{ item.requires_admin }}"
-  with_items: "{{ package_files }}"
+    file_url_username: "{{ item.file_url_username | default('') }}"
+    file_url_password: "{{ item.file_url_password | default('') }}"
+    install_package_ansible: "{{ item.install_package_ansible }}"
+    install_package_docker: "{{ item.install_package_docker }}"
+    docker_url: "{{ item.docker_url }}"
+  loop: "{{ package_files }}"
   when:
-    - not(package_files_skip)
+    - not package_files_skip
+    - aem_port | length > 0
+    - aem_host | length > 0
     - package_files is defined
     - item is defined
   tags:
