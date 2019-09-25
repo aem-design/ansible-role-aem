@@ -22,9 +22,9 @@ None.
 | docker_timezone        	|          	| Australia/Melbourne                                                                                                                                  	|                                      	|
 |                        	|          	|                                                                                                                                                      	|                                      	|
 |                        	|          	|                                                                                                                                                      	|                                      	|
-| adobeaemcloud_username 	|          	|                                                                                                                                                      	| will be used to login to adobe cloud 	|
-| adobeaemcloud_password 	|          	|                                                                                                                                                      	| will be used to login to adobe cloud 	|
-| aem_port               	|          	| 4502                                                                                                                                                 	|                                      	|
+| aem_license_key 	        |          	|                                                                                                                                                      	| if specified license key to use for registration|
+| aem_license_name 	        |          	|                                                                                                                                                      	| if specified license name to use for registration	|
+| aem_port               	|       	| 4502                                                                                                                                                 	|                                      	|
 | aem_debug_port         	|          	| 58242                                                                                                                                                	|                                      	|
 | aem_imageserver_port   	|          	| 57345                                                                                                                                                	|                                      	|
 | aem_debug              	|          	| false                                                                                                                                                	|                                      	|
@@ -50,18 +50,14 @@ None.
 | package_files_skip     	|          	| false                                                                                                                                                	|                                      	|
 | package_files          	|          	| []                                                                                                                                                   	|                                      	|
 |                        	|          	|                                                                                                                                                      	|                                      	|
-| iptable_rules          	|          	|                                                                                                                                                      	|                                      	|
-|                        	|          	| - port: "{{ aem_port | default('4502') }}"                                                                                                           	|                                      	|
-|                        	|          	| comment: "service_{{ docker_container_name }}_port"                                                                                                  	|                                      	|
-|                        	|          	| - port: "{{ aem_debug_port | default('58242') }}"                                                                                                    	|                                      	|
-|                        	|          	| comment: "service_{{ docker_container_name }}_debug_port"                                                                                            	|                                      	|
+| docker_host                |           | unix://var/run/docker.sock | host where to run the docker container |
+|                        	|          	|                                                                                                                                                      	|                                      	|
 
 
 ## Dependencies
 
 This role depends on roles:
  
-- `aem_design.docker_container`
 - `aem_design.aem_license`
 - `aem_design.aem_package`
 - `aem_design.aem_verify`
@@ -69,46 +65,56 @@ This role depends on roles:
 ## Example Playbook
 
 ```yaml
-- hosts: all
-  roles:
-    - {
-        role: aem,
-        aem_port: "4502",
-        aem_runmode: "-Dsling.run.modes=author,crx3,crx3tar,nosamplecontent",
-        aem_jvm_opts: "-server -Xms1024m -Xmx1024m -XX:MaxDirectMemorySize=256M -XX:+CMSClassUnloadingEnabled -Djava.awt.headless=true -Dorg.apache.felix.http.host=0.0.0.0",
-        aem_start_opts: "start -c /aem/crx-quickstart -i launchpad -p 8080 -a 0.0.0.0 -Dsling.properties=conf/sling.properties",
-        docker_container_name: "author",
-        docker_volumes: [
-          "author-repository:/aem/crx-quickstart/repository:z",
-          "author-logs:/aem/crx-quickstart/logs:z",
-          "author-backup:/aem/backup:z"
+  - hosts: all
+    roles:
+        - {
+          role: "{{ role_name }}",
+          docker_published_ports: [
+            5502:8080,
+            59242:58242,
+            59345:57345
           ],
-        docker_published_ports: [
-          "0.0.0.0:4502:8080/tcp",
-          "0.0.0.0:58242:58242/tcp",
-          "0.0.0.0:57345:57345/tcp"
+          docker_volumes: [],
+          docker_container_name: "{{ test_container_name }}",
+          debug_hide: false,
+          docker_host: "unix://tmp/docker.sock",
+          aem_license_key: "{{ service_aem_license_key }}",
+          aem_license_name: "{{ service_aem_license_name }}",
+          aem_port: "5502",
+          aem_host: "{{ dockerhost_ip.stdout }}",
+          package_files_skip: false,
+          package_files: [
+            {
+              maven_repository_url: "http://{{ dockerhost_ip.stdout }}",
+              debug_hide: "false",
+              simple_name: "vanityurls using docker",
+              group_name: "Adobe",
+              package_version: "1.0.2",
+              package_name: "vanityurls-components",
+              package_url: "https://www.adobeaemcloud.com/content/companies/public/adobe/packages/\
+                    cq600/component/vanityurls-components/jcr%3acontent/package/file.res/vanityurls-components-1.0.2.zip",
+              file_name: "vanityurls-components-1.0.2.zip",
+              file_url_username: "{{ service_adobe_cloud_username }}",
+              file_url_password: "{{ service_adobe_cloud_password }}",
+              install_package_ansible: false,
+              install_package_docker: true,
+              docker_url: "unix://tmp/docker.sock"
+            },
+            {
+              debug_hide: "false",
+              simple_name: "acs twitter using docker",
+              group_name: "day_internal/consulting",
+              package_version: "1.0.0",
+              package_name: "com.adobe.acs.bundles.twitter4j-content",
+              package_url: "https://github.com/Adobe-Consulting-Services/com.adobe.acs.bundles.twitter4j/\
+                  releases/download/com.adobe.acs.bundles.twitter4j-1.0.0/com.adobe.acs.bundles.twitter4j-content-1.0.0.zip",
+              file_name: "com.adobe.acs.bundles.twitter4j-content-1.0.0.zip",
+              install_package_ansible: false,
+              install_package_docker: true,
+              docker_url: "unix://tmp/docker.sock"
+            }
           ]
-      }
-```
-
-with variables if package installation is required will need to specify `adobeaemcloud_username` and `adobeaemcloud_password` to enable package download and `maven_repository` to store packages after download for best performance.
-
-```yaml
-package_files:
-  ## SERVICE PACKS
-
-  - {
-    package_source: "adobecloud",
-    simple_name: "adobe servicepack 1",
-    file_name: 'aem-service-pkg-6.5.1.zip',
-    version: '6.5.1',
-    group_name: 'adobe/cq650/servicepack',
-    package_name: 'aem-service-pkg',
-    requires_restart: false,
-    requires_admin: true,
-    package_url: "https://www.adobeaemcloud.com/content/companies/public/adobe/packages/cq650/servicepack/AEM-6.5.1.0/jcr%3acontent/package/file.res/AEM-6.5.1.0-6.5.1.zip"
-  }
-
+        }
 ```
 
 ## License
