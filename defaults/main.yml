@@ -15,13 +15,20 @@ aem_host: "localhost"                                                           
 aem_debug_port: "58242"
 aem_imageserver_port: "57345"
 aem_debug: false
-aem_debug_opts: "-Dcom.sun.management.jmxremote.port={{ aem_debug_port }} -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
+aem_debug_opts: "-Dcom.sun.management.jmxremote.port={{ aem_debug_port }} \
+  -Dcom.sun.management.jmxremote.ssl=false \
+  -Dcom.sun.management.jmxremote.authenticate=false"
 aem_username: "admin"                                                               # user name to use when authenticating to aem
 aem_password: "admin"                                                               # password to use when authenticating to aem
 aem_runmode: "-Dsling.run.modes=author,crx3,crx3tar,nosamplecontent"
-aem_jvm_opts: "-server -Xms1024m -Xmx1024m -XX:MaxDirectMemorySize=256M -XX:+CMSClassUnloadingEnabled -Djava.awt.headless=true -Dorg.apache.felix.http.host=0.0.0.0\
+aem_jvm_opts: "-server -Xms1024m -Xmx1024m \
+  -XX:MaxDirectMemorySize=256M \
+  -XX:+CMSClassUnloadingEnabled \
+  -Djava.awt.headless=true \
+  -Dorg.apache.felix.http.host=0.0.0.0\
   {% if aem_debug %}{{ aem_debug_opts }}{% endif %}"
-aem_start_opts: "start -c /aem/crx-quickstart -i launchpad -p 8080 -a 0.0.0.0 -Dsling.properties=conf/sling.properties"
+aem_start_opts: "start -c /aem/crx-quickstart -i launchpad -p 8080 -a 0.0.0.0 \
+  -Dsling.properties=conf/sling.properties"
 
 # ImageServer 57345
 docker_published_ports: [
