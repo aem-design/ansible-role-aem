@@ -19,7 +19,7 @@
       changed_when: false
 
   tasks:
-    - name: run dispatcher
+    - name: run aem author istance
       include_role:
         name: "{{ role_name }}"
       vars:
@@ -34,8 +34,8 @@
         docker_host: "unix://tmp/docker.sock"
         aem_register_license_key: "{{ service_aem_license_key }}"
         aem_register_license_name: "{{ service_aem_license_name }}"
-        aem_port: "5502"
-        aem_host: "{{ dockerhost_ip.stdout }}"
+        aem_access_port: "5502"
+        aem_access_host: "{{ dockerhost_ip.stdout }}"
         package_files_skip: false
         package_files: [
           {
