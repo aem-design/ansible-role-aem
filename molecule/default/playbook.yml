@@ -32,8 +32,8 @@
         docker_container_name: "{{ test_container_name }}"
         debug_hide: false
         docker_host: "unix://tmp/docker.sock"
-        aem_license_key: "{{ service_aem_license_key }}"
-        aem_license_name: "{{ service_aem_license_name }}"
+        aem_register_license_key: "{{ service_aem_license_key }}"
+        aem_register_license_name: "{{ service_aem_license_name }}"
         aem_port: "5502"
         aem_host: "{{ dockerhost_ip.stdout }}"
         package_files_skip: false

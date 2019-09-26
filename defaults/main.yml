@@ -8,8 +8,8 @@ docker_container_name: "author"
 docker_timezone: "Australia/Melbourne"
 
 # specific role param
-aem_license_key: ""                                                                 # if specified license key to use for registration
-aem_license_name: ""                                                                # if specified license name to use for registration
+aem_register_license_key: ""                                                                 # if specified license key to use for registration
+aem_register_license_name: ""                                                                # if specified license name to use for registration
 aem_port: "4502"                                                                    # if specified port to use to for access to with aem container
 aem_host: "localhost"                                                               # if specified host to use to for access to with aem container
 aem_debug_port: "58242"
