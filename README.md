@@ -69,7 +69,7 @@ This will start aem with default ports and without volumes mounted
   tasks:
     - name: run aem author istance
       include_role:
-        name: "{{ role_name }}"
+        name: aem_design.aem
       vars:
         docker_published_ports: [
           "5502:8080",
