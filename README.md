@@ -56,7 +56,7 @@ None.
 
 ## Dependencies
 
-This role depends on roles:
+This role depends on roles, you will need to add these to your ansible dependencies and download before running this role:
  
 - `aem_design.aem_license`
 - `aem_design.aem_package`
