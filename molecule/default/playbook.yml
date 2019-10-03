@@ -8,8 +8,6 @@
     test_container_name: "aemtest"
     aem_access_port: "5502"
     aem_access_host: "{{ dockerhost_ip.stdout }}"
-    aem_register_license_key: "{{ service_aem_license_key }}"
-    aem_register_license_name: "{{ service_aem_license_name }}"
 
 
   pre_tasks:
@@ -41,26 +39,18 @@
       include_role:
         name: aem_design.aem_license
       vars:
-        aem_license_key: "{{ aem_register_license_key }}"
-        aem_license_name: "{{ aem_register_license_name }}"
+        aem_license_key: "{{ service_aem_license_key }}"
+        aem_license_name: "{{ service_aem_license_name }}"
         aem_port: "{{ aem_access_port }}"
         aem_host: "{{ aem_access_host }}"
-      when:
-        - aem_register_license_key | length > 0
-        - aem_register_license_name | length > 0
-      tags:
-        - docker-container
+        debug_hide: false
     - name: ensure instance is ready
       include_role:
         name: aem_design.aem_verify
       vars:
         aem_port: "{{ aem_access_port }}"
         aem_host: "{{ aem_access_host }}"
-      when:
-        - aem_access_port | length > 0
-        - aem_access_host | length > 0
-      tags:
-        - docker-container
+        debug_hide: false
     - name: install aem packages
       include_role:
         name: aem_design.aem_package
@@ -93,8 +83,8 @@
           file_name: "vanityurls-components-1.0.2.zip",
           file_url_username: "{{ service_adobe_cloud_username }}",
           file_url_password: "{{ service_adobe_cloud_password }}",
-          install_package_ansible: false,
-          install_package_docker: true,
+          install_package_ansible: true,
+          install_package_docker: false,
           docker_url: "unix://tmp/docker.sock"
         },
         {
@@ -106,15 +96,8 @@
           package_url: "https://github.com/Adobe-Consulting-Services/com.adobe.acs.bundles.twitter4j/\
                           releases/download/com.adobe.acs.bundles.twitter4j-1.0.0/com.adobe.acs.bundles.twitter4j-content-1.0.0.zip",
           file_name: "com.adobe.acs.bundles.twitter4j-content-1.0.0.zip",
-          install_package_ansible: false,
-          install_package_docker: true,
+          install_package_ansible: true,
+          install_package_docker: false,
           docker_url: "unix://tmp/docker.sock"
         }
       ]
-      when:
-        - aem_access_port | length > 0
-        - aem_access_host | length > 0
-        - package_files is defined
-        - item is defined
-      tags:
-        - aem-packages
