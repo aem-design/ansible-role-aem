@@ -12,7 +12,7 @@ aem_port: "4502"                                                                
 aem_debug_port: "58242"
 aem_imageserver_port: "57345"
 aem_debug: false
-aem_debug_opts: "-Dcom.sun.management.jmxremote.port={{ aem_access_debug_port }} \
+aem_debug_opts: "-Dcom.sun.management.jmxremote.port={{ aem_debug_port }} \
   -Dcom.sun.management.jmxremote.ssl=false \
   -Dcom.sun.management.jmxremote.authenticate=false"
 
