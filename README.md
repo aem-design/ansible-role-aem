@@ -1,6 +1,8 @@
 # Ansible Role: AEM
 
 [![Build Status](https://travis-ci.org/aem-design/ansible-role-aem.svg?branch=master)](https://travis-ci.org/aem-design/ansible-role-aem)
+[![Ansible Role](https://img.shields.io/ansible/role/d/43185)](https://galaxy.ansible.com/aem_design/aem/)
+[![Ansible Role](https://img.shields.io/ansible/role/43185)](https://galaxy.ansible.com/aem_design/aem/)
 
 Create AEM Containers in your stack.
 > This role was developed as part of
@@ -175,6 +177,14 @@ This will start aem with default ports and without volumes mounted
           docker_host: "unix://tmp/docker.sock"
         }
       ]
+```
+
+## Role Info
+
+To check role info run the following:
+
+```bash
+docker run --rm aemdesign/ansible-playbook:centos7 ansible-galaxy info aem_design.aem
 ```
 
 ## License
