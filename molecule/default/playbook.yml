@@ -1,6 +1,7 @@
 ---
 - name: Converge
   hosts: instance
+  gather_facts: true
   become: true
   vars:
     local_role_name: "ansible-role-aem"

@@ -1,3 +1,4 @@
+---
 name: build
 
 on: [push]
@@ -57,14 +58,9 @@ jobs:
 
       - name: install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install testinfra molecule docker
-
-      - name: Use actual Ansible Galaxy role name for the project directory
-        run: |
-          cd ../
-          mv ansible-role-$ROLE_REPO_NAME $ROLE_NAME_FULL
-          cd $ROLE_NAME_FULL
+          pip3 install --upgrade pip
+          pip3 install --ignore-installed PyYAML
+          pip3 install testinfra molecule docker molecule-docker yamllint flake8 ansible
 
       - name: Run tests
         run: |
