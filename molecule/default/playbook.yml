@@ -29,9 +29,7 @@
         name: "{{ role_name }}"
       vars:
         docker_published_ports: [
-          "5502:8080",
-          "59242:58242",
-          "59345:57345"
+          "5502:8080"
         ]
         docker_volumes: []
         docker_container_name: "{{ test_container_name }}"
