@@ -1,6 +1,6 @@
 # Ansible Role: AEM
 
-[![Build Status](https://travis-ci.org/aem-design/ansible-role-aem.svg?branch=master)](https://travis-ci.org/aem-design/ansible-role-aem)
+[![build](https://github.com/aem-design/ansible-role-aem/actions/workflows/build.yml/badge.svg)](https://github.com/aem-design/ansible-role-aem/actions/workflows/build.yml)
 [![Ansible Role](https://img.shields.io/ansible/role/d/43185)](https://galaxy.ansible.com/aem_design/aem/)
 [![Ansible Role](https://img.shields.io/ansible/role/43185)](https://galaxy.ansible.com/aem_design/aem/)
 
