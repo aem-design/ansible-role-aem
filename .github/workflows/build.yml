@@ -53,7 +53,7 @@ jobs:
           echo "ROLE_REPO_NAME=${ROLE_REPO_NAME}" >> $GITHUB_ENV
           echo "ROLE_NAME=${ROLE_NAME}" >> $GITHUB_ENV
           echo "ROLE_NAMESPACE=${ROLE_NAMESPACE}" >> $GITHUB_ENV
-          echo "ROLE_NAME_FULL=#{ROLE_NAME_FULL}" >> $GITHUB_ENV
+          echo "ROLE_NAME_FULL=${ROLE_NAME_FULL}" >> $GITHUB_ENV
 
       - name: install dependencies
         run: |
