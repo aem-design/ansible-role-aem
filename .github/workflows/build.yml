@@ -48,7 +48,8 @@ jobs:
           echo "ROLE_NAMESPACE=$(grep "company:" ${ROLE_META} | sed -e "s/.*company.* \(.*\)/\1/" | sed "s/\./_/g")" >> $GITHUB_ENV
           # Store Ansible friendly role name to use in molecule.yml
           echo "ROLE_NAME_FULL=$ROLE_NAMESPACE.$ROLE_NAME" >> $GITHUB_ENV
-
+      - name: check env variables
+        run: |
           echo ROLE_REPO_NAME=${ROLE_REPO_NAME}
           echo ROLE_NAME=${ROLE_NAME}
           echo ROLE_NAMESPACE=${ROLE_NAMESPACE}
