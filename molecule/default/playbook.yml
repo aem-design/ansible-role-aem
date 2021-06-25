@@ -72,22 +72,6 @@
         docker_host: "{{ item.docker_host }}"
       loop: [
         {
-          maven_repository_url: "http://{{ dockerhost_ip.stdout }}",
-          debug_hide: "false",
-          simple_name: "vanityurls using docker",
-          group_name: "Adobe",
-          package_version: "1.0.2",
-          package_name: "vanityurls-components",
-          package_url: "https://www.adobeaemcloud.com/content/companies/public/adobe/packages/\
-                            cq600/component/vanityurls-components/jcr%3acontent/package/file.res/vanityurls-components-1.0.2.zip",
-          file_name: "vanityurls-components-1.0.2.zip",
-          file_url_username: "{{ service_adobe_cloud_username }}",
-          file_url_password: "{{ service_adobe_cloud_password }}",
-          install_package_ansible: false,
-          install_package_docker: true,
-          docker_host: "unix://tmp/docker.sock"
-        },
-        {
           debug_hide: "false",
           simple_name: "acs twitter using docker",
           group_name: "day_internal/consulting",
@@ -98,35 +82,6 @@
           file_name: "com.adobe.acs.bundles.twitter4j-content-1.0.0.zip",
           install_package_ansible: true,
           install_package_docker: false,
-          docker_host: "unix://tmp/docker.sock"
-        },
-        {
-          maven_repository_url: "http://{{ dockerhost_ip.stdout }}",
-          debug_hide: "false",
-          simple_name: "vanityurls using docker",
-          group_name: "Adobe",
-          package_version: "1.0.2",
-          package_name: "vanityurls-components",
-          package_url: "https://www.adobeaemcloud.com/content/companies/public/adobe/packages/\
-                            cq600/component/vanityurls-components/jcr%3acontent/package/file.res/vanityurls-components-1.0.2.zip",
-          file_name: "vanityurls-components-1.0.2.zip",
-          file_url_username: "{{ service_adobe_cloud_username }}",
-          file_url_password: "{{ service_adobe_cloud_password }}",
-          install_package_ansible: true,
-          install_package_docker: false,
-          docker_host: "unix://tmp/docker.sock"
-        },
-        {
-          debug_hide: "false",
-          simple_name: "acs twitter using docker",
-          group_name: "day_internal/consulting",
-          package_version: "1.0.0",
-          package_name: "com.adobe.acs.bundles.twitter4j-content",
-          package_url: "https://github.com/Adobe-Consulting-Services/com.adobe.acs.bundles.twitter4j/\
-                          releases/download/com.adobe.acs.bundles.twitter4j-1.0.0/com.adobe.acs.bundles.twitter4j-content-1.0.0.zip",
-          file_name: "com.adobe.acs.bundles.twitter4j-content-1.0.0.zip",
-          install_package_ansible: false,
-          install_package_docker: true,
           docker_host: "unix://tmp/docker.sock"
         }
       ]

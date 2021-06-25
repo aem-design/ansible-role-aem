@@ -8,15 +8,6 @@ lint: |
   yamllint .
   ansible-lint
   flake8
-platforms:
-  - name: instance
-    image: "aemdesign/ansible-playbook:centos7"
-    command: ${MOLECULE_DOCKER_COMMAND:-"/usr/lib/systemd/systemd"}
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - /var/run/docker.sock:/tmp/docker.sock
-    privileged: true
-    pre_build_image: true
 provisioner:
   name: ansible
   log: true
@@ -32,6 +23,15 @@ provisioner:
         service_adobe_cloud_username: "${ADOBECLOUD_USERNAME}"
         service_adobe_cloud_password: "${ADOBECLOUD_PASSWORD}"
         role_name: "${ROLE_NAME_FULL}"
+platforms:
+  - name: instance
+    image: "aemdesign/ansible-playbook:centos7"
+    command: ${MOLECULE_DOCKER_COMMAND:-"/usr/lib/systemd/systemd"}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/tmp/docker.sock
+    privileged: true
+    pre_build_image: true
 scenario:
   name: default
   test_sequence:
@@ -41,9 +41,9 @@ scenario:
     - destroy
     - syntax
     - create
-    - prepare
+    # - prepare
     - converge
-    #    - idempotence
+    # - idempotence
     - side_effect
     - verify
     - cleanup
